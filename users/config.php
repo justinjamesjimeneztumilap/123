@@ -1,6 +1,6 @@
 <?php
 $host = "localhost";
-$db   = "auth_system";
+$db   = "grading";
 $user = "root";
 $pass = "";
 $charset = "utf8mb4";
