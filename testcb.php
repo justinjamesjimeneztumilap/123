@@ -1,3 +1,7 @@
 <?php
-require_once __DIR__ . '/config.php';
-echo "Database connection successful!";
+try {
+    $pdo = new PDO("mysql:host=localhost;dbname=grading", "root", "");
+    echo "PDO MySQL driver works!";
+} catch (PDOException $e) {
+    die("Connection failed: " . $e->getMessage());
+}
