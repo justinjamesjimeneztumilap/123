@@ -1,65 +1,48 @@
 <?php
 session_start();
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+require_once "config.php";
 
-require_once __DIR__ . '/config.php'; // your PDO connection
 $message = "";
 
-// Handle form submission
 if (isset($_POST['register'])) {
-    $first = trim($_POST['first_name']);
-    $last = trim($_POST['last_name']);
     $username = trim($_POST['username']);
-    $email = trim($_POST['email']);
-    $phone = trim($_POST['phone']);
     $password = $_POST['password'];
+
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-    try {
-        // Check if username or email exists
-        $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-        $stmt->execute([$username, $email]);
+    // Check if username exists
+    $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
+    $stmt->execute([$username]);
 
-        if ($stmt->rowCount() > 0) {
-            $message = "Username or email already exists!";
-        } else {
-            // Insert new user
-            $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, username, email, phone, password_hash) VALUES (?, ?, ?, ?, ?, ?)");
-            $stmt->execute([$first, $last, $username, $email, $phone, $password_hash]);
-            $message = "Registration successful! You can now log in.";
-        }
-    } catch (PDOException $e) {
-        $message = "Database error: " . $e->getMessage();
+    if ($stmt->fetch()) {
+        $message = "Username already exists!";
+    } else {
+        $stmt = $pdo->prepare(
+            "INSERT INTO users (username, password_hash) VALUES (?, ?)"
+        );
+        $stmt->execute([$username, $password_hash]);
+
+        $message = "Registration successful! You can now log in.";
     }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Register</title>
-    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-
 <h2>Register</h2>
 
-<?php if ($message) echo "<p class='message'>$message</p>"; ?>
+<?php if ($message) echo "<p>$message</p>"; ?>
 
 <form method="POST">
-    <input type="text" name="first_name" placeholder="First Name" required><br>
-    <input type="text" name="last_name" placeholder="Last Name" required><br>
-    <input type="text" name="username" placeholder="Username" required><br>
-    <input type="email" name="email" placeholder="Email" required><br>
-    <input type="text" name="phone" placeholder="Phone"><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <input type="submit" name="register" value="Register">
+    <input type="text" name="username" placeholder="Username" required><br><br>
+    <input type="password" name="password" placeholder="Password" required><br><br>
+    <button type="submit" name="register">Register</button>
 </form>
 
-<p><a href="index.php">Back to Home</a></p>
-
+<a href="login.php">Go to Login</a>
 </body>
 </html>

@@ -1,52 +1,43 @@
 <?php
-// Show errors for debugging
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 session_start();
-require_once __DIR__ . '/database/db.php';
+require_once "config.php";
 
 $message = "";
 
 if (isset($_POST['login'])) {
-    $email = trim($_POST['email']);
+    $username = trim($_POST['username']);
     $password = $_POST['password'];
 
-    $stmt = $pdo->prepare("SELECT id, username, password_hash FROM users WHERE email = ?");
-    $stmt->execute([$email]);
-    $user = $stmt->fetch();
+    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
+    $stmt->execute([$username]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if ($user && password_verify($password, $user['password_hash'])) {
-        $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
-        header("Location: index.php");
-        exit();
+        header("Location: dashboard.php");
+        exit;
     } else {
-        $message = "Invalid email or password!";
+        $message = "Invalid username or password!";
     }
 }
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-
 <h2>Login</h2>
-<?php if ($message) echo "<p class='message'>$message</p>"; ?>
+
+<?php if ($message) echo "<p>$message</p>"; ?>
 
 <form method="POST">
-    <input type="email" name="email" placeholder="Email" required><br>
-    <input type="password" name="password" placeholder="Password" required><br>
-    <input type="submit" name="login" value="Login">
+    <input type="text" name="username" placeholder="Username" required><br><br>
+    <input type="password" name="password" placeholder="Password" required><br><br>
+    <button type="submit" name="login">Login</button>
 </form>
 
-<p><a href="index.php">Back to Home</a></p>
-
+<a href="register.php">Register</a>
 </body>
 </html>

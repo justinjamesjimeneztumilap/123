@@ -1,18 +1,16 @@
 <?php
 $host = "localhost";
-$db   = "grading";
-$user = "root";
-$pass = "";
-$charset = "utf8mb4";
+$dbname = "grading";   // ✅ your database name
+$username = "root";   // default XAMPP username
+$password = "";       // default XAMPP password (empty)
 
 try {
     $pdo = new PDO(
-        "mysql:host=$host;dbname=$db;charset=$charset",
-        $user,
-        $pass,
+        "mysql:host=$host;dbname=$dbname;charset=utf8",
+        $username,
+        $password,
         [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
     );
-    echo "Database connection successful!";
 } catch (PDOException $e) {
     die("Database connection failed: " . $e->getMessage());
 }
