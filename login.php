@@ -1,6 +1,11 @@
 <?php
+// Show errors for debugging
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 session_start();
-require_once "database/db.php";
+require_once __DIR__ . "/database/db.php";
 
 $message = "";
 
@@ -28,7 +33,7 @@ if (isset($_POST['login'])) {
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
