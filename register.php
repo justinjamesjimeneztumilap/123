@@ -4,10 +4,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-
-require_once __DIR__ . "/database/db.php";
+require_once __DIR__ . '/config.php'; // your PDO connection
 $message = "";
 
+// Handle form submission
 if (isset($_POST['register'])) {
     $first = trim($_POST['first_name']);
     $last = trim($_POST['last_name']);
@@ -17,27 +17,22 @@ if (isset($_POST['register'])) {
     $password = $_POST['password'];
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-    // Check if username or email exists
-    $stmt = $connection->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-    $stmt->bind_param("ss", $username, $email);
-    $stmt->execute();
-    $stmt->store_result();
+    try {
+        // Check if username or email exists
+        $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+        $stmt->execute([$username, $email]);
 
-    if ($stmt->num_rows > 0) {
-        $message = "Username or email already exists!";
-    } else {
-        // Insert new user
-        $stmt = $connection->prepare("INSERT INTO users (first_name, last_name, username, email, phone, password_hash) VALUES (?, ?, ?, ?, ?, ?)");
-        $stmt->bind_param("ssssss", $first, $last, $username, $email, $phone, $password_hash);
-
-        if ($stmt->execute()) {
-            $message = "Registration successful! You can now log in.";
+        if ($stmt->rowCount() > 0) {
+            $message = "Username or email already exists!";
         } else {
-            $message = "Registration failed: " . $stmt->error;
+            // Insert new user
+            $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, username, email, phone, password_hash) VALUES (?, ?, ?, ?, ?, ?)");
+            $stmt->execute([$first, $last, $username, $email, $phone, $password_hash]);
+            $message = "Registration successful! You can now log in.";
         }
+    } catch (PDOException $e) {
+        $message = "Database error: " . $e->getMessage();
     }
-
-    $stmt->close();
 }
 ?>
 
@@ -65,9 +60,6 @@ if (isset($_POST['register'])) {
 </form>
 
 <p><a href="index.php">Back to Home</a></p>
-
-<?php include 'index.php'; ?>
-
 
 </body>
 </html>
