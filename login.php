@@ -8,19 +8,23 @@ if (isset($_POST['login'])) {
     $username = trim($_POST['username']);
     $password = $_POST['password'];
 
-    $stmt = $pdo->prepare("SELECT * FROM users WHERE username = ?");
-    $stmt->execute([$username]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $stmt = $conn->prepare("SELECT username, password_hash FROM users WHERE username = ?");
+    $stmt->bind_param("s", $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
-    if ($user && password_verify($password, $user['password_hash'])) {
-        $_SESSION['username'] = $user['username'];
-        header("Location: dashboard.php");
-        exit;
-    } else {
-        $message = "Invalid username or password!";
+    if ($user = $result->fetch_assoc()) {
+        if (password_verify($password, $user['password_hash'])) {
+            $_SESSION['username'] = $user['username'];
+            header("Location: dashboard.php");
+            exit;
+        }
     }
+
+    $message = "Invalid username or password!";
 }
 ?>
+
 
 <!DOCTYPE html>
 <html>

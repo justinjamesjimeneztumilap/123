@@ -1,5 +1,4 @@
 <?php
-session_start();
 require_once "config.php";
 
 $message = "";
@@ -7,25 +6,39 @@ $message = "";
 if (isset($_POST['register'])) {
     $username = trim($_POST['username']);
     $password = $_POST['password'];
+    $confirm  = $_POST['confirm'];
 
-    $password_hash = password_hash($password, PASSWORD_DEFAULT);
-
-    // Check if username exists
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ?");
-    $stmt->execute([$username]);
-
-    if ($stmt->fetch()) {
-        $message = "Username already exists!";
+    if ($password !== $confirm) {
+        $message = "Passwords do not match!";
     } else {
-        $stmt = $pdo->prepare(
-            "INSERT INTO users (username, password_hash) VALUES (?, ?)"
-        );
-        $stmt->execute([$username, $password_hash]);
+        // Check if username already exists
+        $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $stmt->store_result();
 
-        $message = "Registration successful! You can now log in.";
+        if ($stmt->num_rows > 0) {
+            $message = "Username already taken!";
+        } else {
+            // Hash password
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+
+            // Insert user
+            $stmt = $conn->prepare(
+                "INSERT INTO users (username, password_hash) VALUES (?, ?)"
+            );
+            $stmt->bind_param("ss", $username, $hash);
+
+            if ($stmt->execute()) {
+                $message = "Registration successful! You can now login.";
+            } else {
+                $message = "Registration failed!";
+            }
+        }
     }
 }
 ?>
+
 
 <!DOCTYPE html>
 <html>
