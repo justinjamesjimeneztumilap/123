@@ -1,15 +1,57 @@
 <?php
-$first = $_POST['first_name'];
-$last  = $_POST['last_name'];
-$usern = $_POST['username'];
-$email = $_POST['email'];
-$phone = $_POST['phone'];
-$pass  = password_hash($_POST['password'], PASSWORD_DEFAULT);
+session_start();
+require_once "database/db.php";
 
-$sql = "INSERT INTO users 
-(first_name, last_name, username, email, password_hash, phone)
-VALUES (?, ?, ?, ?, ?, ?)";
+$message = "";
 
-$stmt = $pdo->prepare($sql);
-$stmt->execute([$first, $last, $usern, $email, $pass, $phone]);
+if (isset($_POST['register'])) {
+    $first = trim($_POST['first_name']);
+    $last = trim($_POST['last_name']);
+    $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
+    $phone = trim($_POST['phone']);
+    $password = $_POST['password'];
+
+    $password_hash = password_hash($password, PASSWORD_DEFAULT);
+
+    $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+    $stmt->execute([$username, $email]);
+
+    if ($stmt->rowCount() > 0) {
+        $message = "Username or email already exists!";
+    } else {
+        $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, username, email, phone, password_hash) VALUES (?, ?, ?, ?, ?, ?)");
+        if ($stmt->execute([$first, $last, $username, $email, $phone, $password_hash])) {
+            $message = "Registration successful! You can now log in.";
+        } else {
+            $message = "Registration failed!";
+        }
+    }
+}
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+</head>
+<body>
+
+<h2>Register</h2>
+<?php if ($message) echo "<p style='color:red;'>$message</p>"; ?>
+
+<form method="POST">
+    <input type="text" name="first_name" placeholder="First Name" required><br>
+    <input type="text" name="last_name" placeholder="Last Name" required><br>
+    <input type="text" name="username" placeholder="Username" required><br>
+    <input type="email" name="email" placeholder="Email" required><br>
+    <input type="text" name="phone" placeholder="Phone"><br>
+    <input type="password" name="password" placeholder="Password" required><br>
+    <input type="submit" name="register" value="Register">
+</form>
+
+<p><a href="index.php">Back to Home</a></p>
+
+</body>
+</html>
