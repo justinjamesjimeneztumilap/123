@@ -4,9 +4,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// Include database connection
-require_once __DIR__ . "/database/db.php"; // Adjust path if needed
 
+require_once __DIR__ . "/database/db.php";
 $message = "";
 
 if (isset($_POST['register'])) {
@@ -66,6 +65,9 @@ if (isset($_POST['register'])) {
 </form>
 
 <p><a href="index.php">Back to Home</a></p>
+
+<?php include 'index.php'; ?>
+
 
 </body>
 </html>
