@@ -42,7 +42,7 @@ if (isset($_POST['register'])) {
     <input type="password" name="password" placeholder="Password" required><br><br>
     <button type="submit" name="register">Register</button>
 </form>
-
+<?php include 'navbar.php'; ?>
 <a href="login.php">Go to Login</a>
 </body>
 </html>
