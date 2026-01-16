@@ -28,6 +28,7 @@ session_start();
 
 <h1>Welcome to My Website</h1>
 
+
 <?php if (isset($_SESSION['user_id'])): ?>
     <p>Hello, <?php echo htmlspecialchars($_SESSION['username']); ?>! You are logged in.</p>
 <?php else: ?>
