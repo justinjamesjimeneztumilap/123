@@ -1,7 +1,6 @@
 <?php
 session_start();
 require_once "config.php";
-
 $message = "";
 
 if (isset($_POST['login'])) {
@@ -25,7 +24,6 @@ if (isset($_POST['login'])) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -33,7 +31,6 @@ if (isset($_POST['login'])) {
 </head>
 <body>
 <h2>Login</h2>
-
 <?php if ($message) echo "<p>$message</p>"; ?>
 
 <form method="POST">
@@ -41,7 +38,7 @@ if (isset($_POST['login'])) {
     <input type="password" name="password" placeholder="Password" required><br><br>
     <button type="submit" name="login">Login</button>
 </form>
-<?php include 'navbar.php'; ?>
+
 <a href="register.php">Register</a>
 </body>
 </html>

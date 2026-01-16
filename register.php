@@ -1,6 +1,5 @@
 <?php
 require_once "config.php";
-
 $message = "";
 
 if (isset($_POST['register'])) {
@@ -11,7 +10,7 @@ if (isset($_POST['register'])) {
     if ($password !== $confirm) {
         $message = "Passwords do not match!";
     } else {
-        // Check if username already exists
+        // Check if username exists
         $stmt = $conn->prepare("SELECT id FROM users WHERE username = ?");
         $stmt->bind_param("s", $username);
         $stmt->execute();
@@ -20,15 +19,9 @@ if (isset($_POST['register'])) {
         if ($stmt->num_rows > 0) {
             $message = "Username already taken!";
         } else {
-            // Hash password
             $hash = password_hash($password, PASSWORD_DEFAULT);
-
-            // Insert user
-            $stmt = $conn->prepare(
-                "INSERT INTO users (username, password_hash) VALUES (?, ?)"
-            );
+            $stmt = $conn->prepare("INSERT INTO users (username, password_hash) VALUES (?, ?)");
             $stmt->bind_param("ss", $username, $hash);
-
             if ($stmt->execute()) {
                 $message = "Registration successful! You can now login.";
             } else {
@@ -39,7 +32,6 @@ if (isset($_POST['register'])) {
 }
 ?>
 
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -47,15 +39,15 @@ if (isset($_POST['register'])) {
 </head>
 <body>
 <h2>Register</h2>
-
 <?php if ($message) echo "<p>$message</p>"; ?>
 
 <form method="POST">
     <input type="text" name="username" placeholder="Username" required><br><br>
     <input type="password" name="password" placeholder="Password" required><br><br>
+    <input type="password" name="confirm" placeholder="Confirm Password" required><br><br>
     <button type="submit" name="register">Register</button>
 </form>
-<?php include 'navbar.php'; ?>
-<a href="login.php">Go to Login</a>
+
+<a href="login.php">Login</a>
 </body>
 </html>
