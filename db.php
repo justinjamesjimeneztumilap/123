@@ -1,17 +1,12 @@
 <?php
-define('DB_HOST', 'localhost'); // XAMPP host or your DB host
-define('DB_NAME', 'grading');   // Your database name
-define('DB_USER', 'root');      // DB username
-define('DB_PASS', '');          // DB password (empty for XAMPP)
+// MySQLi connection
+$connection = new mysqli("127.0.0.1", "mariadb", "mariadb", "grading");
 
-try {
-    $pdo = new PDO(
-        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
-        DB_USER,
-        DB_PASS
-    );
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+// Check connection
+if ($connection->connect_error) {
+    die("Connection failed: " . $connection->connect_error);
 }
+
+// Set charset to support emojis and special characters
+$connection->set_charset("utf8mb4");
 ?>

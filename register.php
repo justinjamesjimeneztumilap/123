@@ -1,14 +1,11 @@
 <?php
-// Display all errors (for debugging)
+session_start();
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-session_start();
-
-// Adjust this path depending on where your db.php actually is
-require_once __DIR__ . "/database/db.php"; // If db.php is in database folder
-// require_once __DIR__ . "/db.php"; // Use this if db.php is in the same folder as register.php
+// Include database connection
+require_once __DIR__ . "/database/db.php"; // Adjust path if needed
 
 $message = "";
 
@@ -19,24 +16,29 @@ if (isset($_POST['register'])) {
     $email = trim($_POST['email']);
     $phone = trim($_POST['phone']);
     $password = $_POST['password'];
-
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
-    // Check if username or email already exists
-    $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
-    $stmt->execute([$username, $email]);
+    // Check if username or email exists
+    $stmt = $connection->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
+    $stmt->bind_param("ss", $username, $email);
+    $stmt->execute();
+    $stmt->store_result();
 
-    if ($stmt->rowCount() > 0) {
+    if ($stmt->num_rows > 0) {
         $message = "Username or email already exists!";
     } else {
         // Insert new user
-        $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, username, email, phone, password_hash) VALUES (?, ?, ?, ?, ?, ?)");
-        if ($stmt->execute([$first, $last, $username, $email, $phone, $password_hash])) {
+        $stmt = $connection->prepare("INSERT INTO users (first_name, last_name, username, email, phone, password_hash) VALUES (?, ?, ?, ?, ?, ?)");
+        $stmt->bind_param("ssssss", $first, $last, $username, $email, $phone, $password_hash);
+
+        if ($stmt->execute()) {
             $message = "Registration successful! You can now log in.";
         } else {
-            $message = "Registration failed!";
+            $message = "Registration failed: " . $stmt->error;
         }
     }
+
+    $stmt->close();
 }
 ?>
 
@@ -50,6 +52,7 @@ if (isset($_POST['register'])) {
 <body>
 
 <h2>Register</h2>
+
 <?php if ($message) echo "<p class='message'>$message</p>"; ?>
 
 <form method="POST">
