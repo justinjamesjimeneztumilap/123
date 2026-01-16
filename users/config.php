@@ -1,17 +1,7 @@
 <?php
-$host = "localhost";
-$db   = "grading";
-$user = "root";
-$pass = "";
-$charset = "utf8mb4";
-
-try {
-    $pdo = new PDO(
-        "mysql:host=$host;dbname=$db;charset=$charset",
-        $user,
-        $pass,
-        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION]
-    );
-} catch (PDOException $e) {
-    die("Database connection failed");
-}
+// Database credentials
+define("DB_HOST", "localhost");      // Usually 'localhost'
+define("DB_NAME", "grading");        // Your database name
+define("DB_USER", "root");           // Your MySQL username
+define("DB_PASS", "");               // Your MySQL password (leave empty if none)
+?>

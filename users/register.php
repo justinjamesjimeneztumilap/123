@@ -35,11 +35,12 @@ if (isset($_POST['register'])) {
 <head>
     <meta charset="UTF-8">
     <title>Register</title>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
 <h2>Register</h2>
-<?php if ($message) echo "<p style='color:red;'>$message</p>"; ?>
+<?php if ($message) echo "<p class='message'>$message</p>"; ?>
 
 <form method="POST">
     <input type="text" name="first_name" placeholder="First Name" required><br>

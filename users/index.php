@@ -7,10 +7,7 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <title>Home</title>
-    <style>
-        body { font-family: Arial; margin: 40px; }
-        nav a { margin-right: 20px; text-decoration: none; }
-    </style>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
@@ -26,8 +23,7 @@ session_start();
 
 <hr>
 
-<h1>Welcome to My Website</h1>
-
+<h1>Welcome to the Grading System</h1>
 
 <?php if (isset($_SESSION['user_id'])): ?>
     <p>Hello, <?php echo htmlspecialchars($_SESSION['username']); ?>! You are logged in.</p>

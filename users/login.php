@@ -28,11 +28,12 @@ if (isset($_POST['login'])) {
 <head>
     <meta charset="UTF-8">
     <title>Login</title>
+    <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
 
 <h2>Login</h2>
-<?php if ($message) echo "<p style='color:red;'>$message</p>"; ?>
+<?php if ($message) echo "<p class='message'>$message</p>"; ?>
 
 <form method="POST">
     <input type="email" name="email" placeholder="Email" required><br>
