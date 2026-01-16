@@ -1,12 +1,12 @@
 <?php
-define('DB_HOST', 'localhost'); // XAMPP host
+define('DB_HOST', 'localhost'); // XAMPP host or your DB host
 define('DB_NAME', 'grading');   // Your database name
-define('DB_USER', 'root');      // Default XAMPP user
-define('DB_PASS', '');          // Default XAMPP password (empty)
+define('DB_USER', 'root');      // DB username
+define('DB_PASS', '');          // DB password (empty for XAMPP)
 
 try {
     $pdo = new PDO(
-        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8",
+        "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=utf8mb4",
         DB_USER,
         DB_PASS
     );

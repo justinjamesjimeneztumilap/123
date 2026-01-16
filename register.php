@@ -1,10 +1,14 @@
 <?php
+// Display all errors (for debugging)
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 session_start();
-require_once __DIR__ . "/database/db.php";
+
+// Adjust this path depending on where your db.php actually is
+require_once __DIR__ . "/database/db.php"; // If db.php is in database folder
+// require_once __DIR__ . "/db.php"; // Use this if db.php is in the same folder as register.php
 
 $message = "";
 
@@ -18,12 +22,14 @@ if (isset($_POST['register'])) {
 
     $password_hash = password_hash($password, PASSWORD_DEFAULT);
 
+    // Check if username or email already exists
     $stmt = $pdo->prepare("SELECT id FROM users WHERE username = ? OR email = ?");
     $stmt->execute([$username, $email]);
 
     if ($stmt->rowCount() > 0) {
         $message = "Username or email already exists!";
     } else {
+        // Insert new user
         $stmt = $pdo->prepare("INSERT INTO users (first_name, last_name, username, email, phone, password_hash) VALUES (?, ?, ?, ?, ?, ?)");
         if ($stmt->execute([$first, $last, $username, $email, $phone, $password_hash])) {
             $message = "Registration successful! You can now log in.";
